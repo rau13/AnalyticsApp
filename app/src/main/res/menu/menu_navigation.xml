@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<item
+        android:id="@+id/overview"
+        android:title="Facebook"
+        android:icon="@drawable/credit_card_24px"
+        />-->
+    <item
+        android:id="@+id/OverView"
+        android:title="Overview"
+        android:icon="@drawable/timeline_24px"/>
+   <!--<item
+        android:id="@+id/add_form"
+        android:title="Bitrix"
+        android:icon="@drawable/credit_card_24px"/>-->
+</menu>

@@ -9,6 +9,7 @@ import android.os.*
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
@@ -16,6 +17,7 @@ import com.example.myapplication.adapters.CustomMarkerView
 import com.example.myapplication.adapters.FixedSpeedScroller
 import com.example.myapplication.adapters.OverViewAdapter
 import com.example.myapplication.adapters.OverViewModel
+import com.example.myapplication.responses.BTRXLeads
 import com.example.myapplication.responses.ResponseBTRXDeals
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -25,6 +27,9 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.database.*
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_overview.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.NonCancellable.isActive
+import java.lang.Runnable
 import java.lang.reflect.Field
 import java.net.URL
 import java.text.ParseException
@@ -34,16 +39,6 @@ import kotlin.math.roundToInt
 
 
 class Overview : AppCompatActivity() {
-    private val today_date = arrayListOf<String?>()
-    private var date_num:String? = null
-    private var cpm:ArrayList<String?> = arrayListOf()
-    private var ctr = arrayListOf<String?>()
-    private var spend = arrayListOf<String?>()
-    private var clicks = arrayListOf<String?>()
-    private var frequency = arrayListOf<String?>()
-    private var impression = arrayListOf<String?>()
-    private var date_distinc = arrayListOf<String?>()
-    private var ohvat = arrayListOf<String?>()
     private lateinit var myModelList: ArrayList<OverViewModel>
     private lateinit var myAdapter: OverViewAdapter
     private lateinit var viewpager: ViewPager
@@ -66,11 +61,15 @@ class Overview : AppCompatActivity() {
     private var sumspendtg:ArrayList<Any?> = arrayListOf()
     private var chastotafb:ArrayList<Any?> = arrayListOf()
     private var email:String? = null
+    private var nextLeads:Int = 305
+    private var nextDeals:Int = 1469
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_overview)
         init()
+        val myJob = startRepeatingJob(3600000L)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -215,7 +214,7 @@ class Overview : AppCompatActivity() {
                 }
             })
         }
-        loadcards()
+        Handler().postDelayed({loadcards()},1200)
 
     }
     fun getBTRXLeads(){
@@ -239,7 +238,8 @@ class Overview : AppCompatActivity() {
                 }
             })
         }
-        loadcards()
+        Handler().postDelayed({loadcards()},1200)
+
 
 
     }
@@ -862,12 +862,82 @@ class Overview : AppCompatActivity() {
         val intent = Intent(this, AddForm::class.java)
         startActivity(intent)
     }
-    fun test(){
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json?start=1419").readText()
+
+    fun setBTXDataLeads(){
+        database = FirebaseDatabase.getInstance().getReference("Bitrix")
+        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.lead.list.json?start=$nextLeads").readText()
+        var gson = Gson()
+        var data = gson.fromJson(response, BTRXLeads::class.java)
+        Log.d("Mylog","${data.total}")
+        val delimiter1 = "T"
+        val delimiter2 = "+"
+        for(i in 0 until data.result!!.size){
+            database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).get().addOnSuccessListener {
+                if(!it.exists()){
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1, delimiter2)[1]).child("COMPANYTITLE").setValue(data.result!![i]!!.cOMPANYTITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Comments").setValue(data.result!![i]!!.cOMMENTS)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.nAME)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }else{
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1, delimiter2)[1]).child("COMPANYTITLE").setValue(data.result!![i]!!.cOMPANYTITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Comments").setValue(data.result!![i]!!.cOMMENTS)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.nAME)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }
+            }
+        }
+    }
+    fun setBTXDataDeals(){
+        val database =  FirebaseDatabase.getInstance().getReference("BitrixDeals")
+        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json?start=$nextDeals").readText()
         var gson = Gson()
         var data = gson.fromJson(response, ResponseBTRXDeals::class.java)
+        Log.d("Mylog","${data.total}")
+        val delimiter1 = "T"
+        val delimiter2 = "+"
+
         for(i in 0 until data.result!!.size){
-            Log.d("Mylog", "${data.result!![i]!!.cOMMENTS}")
+            database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).get().addOnSuccessListener {
+                if(!it.exists()){
+
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.sOURCEID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }else{
+
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.sOURCEID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }
+            }
+
+
+
+        }
+    }
+    /**
+     * start Job
+     * val job = startRepeatingJob()
+     * cancels the job and waits for its completion
+     * job.cancelAndJoin()
+     * Params
+     * timeInterval: time milliSeconds
+     */
+    @OptIn(InternalCoroutinesApi::class)
+    private fun startRepeatingJob(timeInterval: Long): Job {
+        return CoroutineScope(Dispatchers.Default).launch {
+            while (NonCancellable.isActive) {
+                setBTXDataLeads()
+                setBTXDataDeals()
+
+                delay(timeInterval)
+            }
         }
     }
 }

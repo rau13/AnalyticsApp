@@ -19,6 +19,7 @@ import com.example.myapplication.adapters.OverViewAdapter
 import com.example.myapplication.adapters.OverViewModel
 import com.example.myapplication.responses.BTRXLeads
 import com.example.myapplication.responses.ResponseBTRXDeals
+import com.example.myapplication.responses.ResponseFB
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -35,10 +36,19 @@ import java.net.URL
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.fixedRateTimer
 import kotlin.math.roundToInt
 
 
 class Overview : AppCompatActivity() {
+    private val today_date = arrayListOf<String?>()
+    private var cpm:ArrayList<String?> = arrayListOf()
+    private var ctr = arrayListOf<String?>()
+    private var spend = arrayListOf<String?>()
+    private var clicks = arrayListOf<String?>()
+    private var frequency = arrayListOf<String?>()
+    private var impression = arrayListOf<String?>()
+    private var ohvat = arrayListOf<String?>()
     private lateinit var myModelList: ArrayList<OverViewModel>
     private lateinit var myAdapter: OverViewAdapter
     private lateinit var viewpager: ViewPager
@@ -68,7 +78,6 @@ class Overview : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_overview)
         init()
-        val myJob = startRepeatingJob(3600000L)
 
     }
 
@@ -126,7 +135,8 @@ class Overview : AppCompatActivity() {
        getFireBaseData()
        getBTRXDeals()
        getBTRXLeads()
-
+        getFB()
+        setFBFirebase()
 
 
        Handler().postDelayed({
@@ -165,6 +175,24 @@ class Overview : AppCompatActivity() {
 
            }
        })
+        /* fixedRateTimer("timer", false, 0L, 60 * 1000) {
+
+            cpm.clear()
+            ctr.clear()
+            spend.clear()
+            clicks.clear()
+            frequency.clear()
+            impression.clear()
+            ohvat.clear()
+            getFB()
+            setFBFirebase()
+
+        }
+        fixedRateTimer("timer", false, 0L, 10800) {
+
+            setBTXDataDeals()
+            setBTXDataLeads()
+        }*/
 
    }
     fun loadcards(){
@@ -214,7 +242,7 @@ class Overview : AppCompatActivity() {
                 }
             })
         }
-        Handler().postDelayed({loadcards()},1200)
+        Handler().postDelayed({loadcards()},1500)
 
     }
     fun getBTRXLeads(){
@@ -223,6 +251,7 @@ class Overview : AppCompatActivity() {
             database.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     dates.forEach{
+
                         for (dataKeys in dataSnapshot.child(it).children){
                             childrens.add(dataKeys.key.toString())
                             total.add(dataKeys.key.toString())
@@ -238,8 +267,7 @@ class Overview : AppCompatActivity() {
                 }
             })
         }
-        Handler().postDelayed({loadcards()},1200)
-
+        Handler().postDelayed({loadcards()},1500)
 
 
     }
@@ -249,6 +277,7 @@ class Overview : AppCompatActivity() {
         Log.d("Mylog","$dates")
         daysCount = dates.count()
         dates.forEach{
+            Log.d("Mylog","$it")
             database.child(it).get().addOnSuccessListener {
 
                 if (it.exists()){
@@ -938,6 +967,132 @@ class Overview : AppCompatActivity() {
 
                 delay(timeInterval)
             }
+        }
+    }
+   /* fun getFB(){
+        var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()
+        var gson = Gson()
+        var data = gson.fromJson(response, ResponseFB::class.java)
+        for(i in 0 until data.data!!.size){
+            today_date.add(data.data!!.get(i)?.dateStart)
+            cpm.add( data.data!!.get(i)?.cpm)
+            ctr.add(data.data!!.get(i)?.ctr)
+            spend.add(data.data!!.get(i)?.spend)
+            clicks.add(data.data!!.get(i)?.clicks)
+            frequency.add(data.data!!.get(i)?.frequency)
+            impression.add(data.data!!.get(i)?.impressions)
+            ohvat.add(data.data!!.get(i)?.reach)
+            Log.d("Mylog","$today_date")
+        }
+    }*/
+    private fun getData(){
+        for(i in 10..16){
+            var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?level=adset&time_range={since:%272022-05-$i%27,until:%272022-05-$i%27}&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&period=day&access_token=EAAGIwn75WhMBABn3OHLdHzFBmZB8kM8Lg3DprPysWNseX16sPwxE0rzn8AsX7A1fZBKe31ebzyqwlAB5t42W60Pco3ZAn4McnLEkwoO5U72x39ZBQLT0RZCsx5jRSHPireq6QEX8foRGTOhqHkYaZC58CYXj2qrZArxfAItjZChj8pSsOGHZAxWVQ").readText()
+            var gson = Gson()
+            var data = gson.fromJson(response, ResponseFB::class.java)
+            var today_date1 = arrayListOf<String?>()
+            var cpm1 = arrayListOf<String?>()
+            var ctr1 = arrayListOf<String?>()
+            var spend1 = arrayListOf<String?>()
+            var clicks1 = arrayListOf<String?>()
+            var frequency1 = arrayListOf<String?>()
+            var impression1 = arrayListOf<String?>()
+            var ohvat1 = arrayListOf<String?>()
+            for(i in 0 until data.data!!.size){
+                today_date1.add(data.data!!.get(i)?.dateStop)
+                cpm1.add( data.data!!.get(i)?.cpm)
+                ctr1.add(data.data!!.get(i)?.ctr)
+                spend1.add(data.data!!.get(i)?.spend)
+                clicks1.add(data.data!!.get(i)?.clicks)
+                frequency1.add(data.data!!.get(i)?.frequency)
+                impression1.add(data.data!!.get(i)?.impressions)
+                ohvat1.add(data.data!!.get(i)?.reach)
+                database.child(today_date1[0].toString()).get().addOnSuccessListener {
+                    if (!it.exists()) {
+                        database.child(today_date1[0].toString()).child("Охват")
+                            .setValue(ohvat1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Показы")
+                            .setValue(impression1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Клики")
+                            .setValue(clicks1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Частота")
+                            .setValue(frequency1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("CTR")
+                            .setValue(ctr1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Стоимость 1000 охватов")
+                            .setValue(cpm1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Сумма затрат")
+                            .setValue(spend1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Сумма затрат в тенге").setValue(spend1.map { it!!.toDouble()*470f.toDouble()  }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Курс валюты").setValue("470").toString()
+
+                    } else {
+                        database.child(today_date1[0].toString()).child("Охват")
+                            .setValue(ohvat1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Показы")
+                            .setValue(impression1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Клики")
+                            .setValue(clicks1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Частота")
+                            .setValue(frequency1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("CTR")
+                            .setValue(ctr1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Стоимость 1000 охватов")
+                            .setValue(cpm1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Сумма затрат")
+                            .setValue(spend1.map { it!!.toFloat() }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Сумма затрат в тенге").setValue(spend1.map { it!!.toDouble()*470f.toDouble()  }.sum().toString())
+                        database.child(today_date1[0].toString()).child("Курс валюты").setValue("434").toString()
+
+                    }
+
+                }
+
+            }
+            Log.d("Mylog","$today_date1, $cpm1, $ctr1, $spend1, $clicks1, $frequency1, $impression1, $ohvat1")
+        }
+    }
+    fun setFBFirebase(){
+        //Date
+        database.child("2022-04-11").get().addOnSuccessListener {
+            if(!it.exists()){
+                database.child(today_date[0].toString()).child("Охват").setValue(ohvat.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Показы").setValue(impression.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Клики").setValue(clicks.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Частота").setValue(frequency.map{it!!.toFloat()}.sum().toString())
+                database.child(today_date[0].toString()).child("CTR").setValue(ctr.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Стоимость 1000 охватов").setValue(cpm.map{it!!.toFloat()}.sum().toString())
+                database.child(today_date[0].toString()).child("Сумма затрат").setValue(spend.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Сумма затрат в тенге").setValue(spend.map { it!!.toDouble()*434!!.toDouble()  }.sum().toString())
+                database.child(today_date[0].toString()).child("Курс валюты").setValue(434).toString()
+            }else{
+                database.child(today_date[0].toString()).child("Охват").setValue(ohvat.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Показы").setValue(impression.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Клики").setValue(clicks.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Частота").setValue(frequency.map{it!!.toFloat()}.sum().toString())
+                database.child(today_date[0].toString()).child("CTR").setValue(ctr.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Стоимость 1000 охватов").setValue(cpm.map{it!!.toFloat()}.sum().toString())
+                database.child(today_date[0].toString()).child("Сумма затрат").setValue(spend.map { it!!.toFloat() }.sum().toString())
+                database.child(today_date[0].toString()).child("Сумма затрат в тенге").setValue(spend.map { it!!.toDouble()*434!!.toDouble()  }.sum().toString())
+                database.child(today_date[0].toString()).child("Курс валюты").setValue(434).toString()
+            }
+
+        }
+    }
+    fun getFB(){
+        var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()
+        var gson = Gson()
+        var data = gson.fromJson(response, ResponseFB::class.java)
+        for(i in 0 until data.data!!.size){
+            today_date.add(data.data!!.get(i)?.dateStart)
+            cpm.add( data.data!!.get(i)?.cpm)
+            ctr.add(data.data!!.get(i)?.ctr)
+            spend.add(data.data!!.get(i)?.spend)
+            clicks.add(data.data!!.get(i)?.clicks)
+            frequency.add(data.data!!.get(i)?.frequency)
+            impression.add(data.data!!.get(i)?.impressions)
+            ohvat.add(data.data!!.get(i)?.reach)
+            Log.d("Mylog","$today_date")
         }
     }
 }

@@ -52,7 +52,7 @@ class Overview : AppCompatActivity() {
     private lateinit var myModelList: ArrayList<OverViewModel>
     private lateinit var myAdapter: OverViewAdapter
     private lateinit var viewpager: ViewPager
-    lateinit var database: DatabaseReference
+    private lateinit var database: DatabaseReference
     private var dates:ArrayList<String> = arrayListOf()
     private var endDateRange:Long? = null
     private var daysCount:Int? = null
@@ -82,7 +82,7 @@ class Overview : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun init(){
+    private fun init(){
        supportActionBar!!.hide()
        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
        StrictMode.setThreadPolicy(policy)
@@ -120,22 +120,23 @@ class Overview : AppCompatActivity() {
        viewpager.setPadding(100, 0, 100, 0)
 
        //bottomMenu()
-       dates.add("2022-04-10")
-       dates.add("2022-04-11")
+        getFB()
+       dates.add(today_date[0].toString())
+       dates.add(today_date[0].toString())
        daysCount = dates.count()
        textViewDataOverview.text = "${dates[0]}\n${dates[1]}"
        DataTextViewAll.text = "${dates[0]}\n${dates[1]}"
        val calendar = Calendar.getInstance()
-       calendar.set(Calendar.YEAR, 2022)
-       calendar.set(Calendar.MONTH, 3)
-       calendar.set(Calendar.DAY_OF_MONTH,11)
+       calendar.set(Calendar.YEAR, today_date[0]!!.split("-")[0].toInt())
+       calendar.set(Calendar.MONTH, today_date[0]!!.split("-")[1].toInt()-1)
+       calendar.set(Calendar.DAY_OF_MONTH,today_date[0]!!.split("-")[2].toInt())
        endDateRange = calendar.timeInMillis
 
        database = FirebaseDatabase.getInstance().getReference("Dates")
        getFireBaseData()
        getBTRXDeals()
        getBTRXLeads()
-        getFB()
+
         setFBFirebase()
 
 
@@ -195,7 +196,7 @@ class Overview : AppCompatActivity() {
         }*/
 
    }
-    fun loadcards(){
+    private fun loadcards(){
         myModelList.clear()
         myModelList.add(OverViewModel("Охват", ohvat_fb.map { it.toString().toFloat() }.sum().roundToInt(),25000*daysCount!!))
         myModelList.add(OverViewModel("Показы",pokazi_fb.map { it.toString().toFloat() }.sum().roundToInt(),30000*daysCount!!))
@@ -215,7 +216,7 @@ class Overview : AppCompatActivity() {
         viewpager.setPadding(100, 0, 100, 0)
         percent_Fact()
     }
-    fun getBTRXDeals(){
+    private fun getBTRXDeals(){
         val database = FirebaseDatabase.getInstance().getReference("BitrixDeals")
 
         database.get().addOnSuccessListener {
@@ -245,7 +246,7 @@ class Overview : AppCompatActivity() {
         Handler().postDelayed({loadcards()},1500)
 
     }
-    fun getBTRXLeads(){
+    private fun getBTRXLeads(){
         val database = FirebaseDatabase.getInstance().getReference("Bitrix")
         database.get().addOnSuccessListener {
             database.addValueEventListener(object : ValueEventListener {
@@ -273,7 +274,7 @@ class Overview : AppCompatActivity() {
     }
     @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.N)
-    fun getFireBaseData(){
+    private fun getFireBaseData(){
         Log.d("Mylog","$dates")
         daysCount = dates.count()
         dates.forEach{
@@ -317,11 +318,11 @@ class Overview : AppCompatActivity() {
         }
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    fun selectDate(view: View){
+     fun selectDate(view: View){
         dateRangePicker()
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    fun dateRangePicker(){
+    private fun dateRangePicker(){
         val dateRangePicker =
             MaterialDatePicker
                 .Builder.dateRangePicker().setTheme(com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialCalendar)
@@ -422,7 +423,7 @@ class Overview : AppCompatActivity() {
         return format.format(date)
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    fun getDatesBetween(dateString1:String, dateString2:String):List<String> {
+    private fun getDatesBetween(dateString1:String, dateString2:String):List<String> {
 
         val input = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
         var date1: Date? = null
@@ -449,7 +450,7 @@ class Overview : AppCompatActivity() {
     }
 
 
-    fun chart(values:ArrayList<Int>){
+    private fun chart(values:ArrayList<Int>){
 
         Log.d("Mylog","$dates")
         try{
@@ -511,7 +512,7 @@ class Overview : AppCompatActivity() {
 
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    fun getDaysAgo(daysAgo: Int, day: Int, month: Int, year: Int): String? {
+    private fun getDaysAgo(daysAgo: Int, day: Int, month: Int, year: Int): String? {
         val calendar = Calendar.getInstance()
 
         calendar.set(Calendar.YEAR, year)
@@ -525,7 +526,7 @@ class Overview : AppCompatActivity() {
         return dateRange
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    fun days7(view:View){
+     fun days7(view:View){
         val dataChart = findViewById<com.github.mikephil.charting.charts.LineChart>(R.id.LineChart)
         days7Stat.isEnabled = false
         days3Stat.isEnabled = false
@@ -662,7 +663,7 @@ class Overview : AppCompatActivity() {
 
         },3800)
     }
-    fun viewAll(view: View){
+     fun viewAll(view: View){
         val view = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.viewAll)
 
         view.visibility = View.VISIBLE
@@ -671,7 +672,7 @@ class Overview : AppCompatActivity() {
         val view = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.viewAll)
         view.visibility = View.GONE
     }
-    fun percent_Fact(){
+    private fun percent_Fact(){
         var percentFactOhvat = (ohvat_fb.map { it.toString().toFloat() }.sum()*100).roundToInt()/(25000*daysCount!!)
         var percentFactPokazi = (pokazi_fb.map { it.toString().toFloat() }.sum()*100).roundToInt()/(30000*daysCount!!)
         var percentFactClicks = (clicks_fb.map { it.toString().toFloat() }.sum()*100).roundToInt()/(800*daysCount!!)
@@ -695,7 +696,7 @@ class Overview : AppCompatActivity() {
         progressBar12_OverView.progress = percentFactLeads
     }
     @RequiresApi(Build.VERSION_CODES.N)
-    fun ohvatCard(view:View){
+     fun ohvatCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Охват", ohvat_fb.map { it.toString().toFloat() }.sum().roundToInt(),25000*daysCount!!))
         myModelList.add(OverViewModel("Показы",pokazi_fb.map { it.toString().toFloat() }.sum().roundToInt(),30000*daysCount!!))
@@ -716,7 +717,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(ohvat_fb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)
     }
-    fun pokaziCard(view:View){
+     fun pokaziCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Показы",pokazi_fb.map { it.toString().toFloat() }.sum().roundToInt(),30000*daysCount!!))
         myModelList.add(OverViewModel("Охват", ohvat_fb.map { it.toString().toFloat() }.sum().roundToInt(),25000*daysCount!!))
@@ -735,7 +736,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(pokazi_fb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)
     }
-    fun clicksCard(view:View){
+     fun clicksCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Клики", clicks_fb.map { it.toString().toFloat() }.sum().roundToInt(), 800*daysCount!!))
         myModelList.add(OverViewModel("Показы",pokazi_fb.map { it.toString().toFloat() }.sum().roundToInt(),30000*daysCount!!))
@@ -754,7 +755,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(clicks_fb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)
     }
-    fun chastotaCard(view:View){
+     fun chastotaCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
         myModelList.add(OverViewModel("Клики", clicks_fb.map { it.toString().toFloat() }.sum().roundToInt(), 800*daysCount!!))
@@ -773,7 +774,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(chastotafb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)
     }
-    fun ctrCard(view:View){
+   fun ctrCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
@@ -792,7 +793,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(Ctr_fb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)
     }
-    fun fb1000Card(view:View){
+     fun fb1000Card(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
@@ -849,7 +850,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(sumspendtg.map { it.toString().toFloat().toInt() } as ArrayList<Int>)
     }
-    fun dealsCard(view:View){
+   fun dealsCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
@@ -868,7 +869,7 @@ class Overview : AppCompatActivity() {
         view.visibility = View.GONE
         chart(valuesDeals)
     }
-    fun leadsCard(view:View){
+   fun leadsCard(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
@@ -892,7 +893,7 @@ class Overview : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun setBTXDataLeads(){
+    private fun setBTXDataLeads(){
         database = FirebaseDatabase.getInstance().getReference("Bitrix")
         var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.lead.list.json?start=$nextLeads").readText()
         var gson = Gson()
@@ -920,7 +921,7 @@ class Overview : AppCompatActivity() {
             }
         }
     }
-    fun setBTXDataDeals(){
+    private fun setBTXDataDeals(){
         val database =  FirebaseDatabase.getInstance().getReference("BitrixDeals")
         var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json?start=$nextDeals").readText()
         var gson = Gson()
@@ -950,25 +951,7 @@ class Overview : AppCompatActivity() {
 
         }
     }
-    /**
-     * start Job
-     * val job = startRepeatingJob()
-     * cancels the job and waits for its completion
-     * job.cancelAndJoin()
-     * Params
-     * timeInterval: time milliSeconds
-     */
-    @OptIn(InternalCoroutinesApi::class)
-    private fun startRepeatingJob(timeInterval: Long): Job {
-        return CoroutineScope(Dispatchers.Default).launch {
-            while (NonCancellable.isActive) {
-                setBTXDataLeads()
-                setBTXDataDeals()
 
-                delay(timeInterval)
-            }
-        }
-    }
    /* fun getFB(){
         var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()
         var gson = Gson()
@@ -1052,7 +1035,7 @@ class Overview : AppCompatActivity() {
             Log.d("Mylog","$today_date1, $cpm1, $ctr1, $spend1, $clicks1, $frequency1, $impression1, $ohvat1")
         }
     }
-    fun setFBFirebase(){
+    private fun setFBFirebase(){
         //Date
         database.child("2022-04-11").get().addOnSuccessListener {
             if(!it.exists()){
@@ -1079,7 +1062,7 @@ class Overview : AppCompatActivity() {
 
         }
     }
-    fun getFB(){
+    private fun getFB(){
         var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()
         var gson = Gson()
         var data = gson.fromJson(response, ResponseFB::class.java)
@@ -1095,6 +1078,12 @@ class Overview : AppCompatActivity() {
             Log.d("Mylog","$today_date")
         }
     }
+    fun Voronka(view:View){
+        val intent = Intent(this, Voronka::class.java)
+        startActivity(intent)
+    }
 }
+
+
 
 

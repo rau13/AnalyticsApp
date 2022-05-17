@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".Voronka"
+            android:exported="false" />
+        <activity
             android:name=".AddForm"
             android:exported="false" />
         <activity

@@ -16,7 +16,7 @@
         android:layout_marginTop="-24dp"
         android:background="#00000000"
         android:src="@drawable/rectangle_8__1_"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +30,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="26dp"
         android:alpha="50"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/cardBackGround"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
         android:gravity="center"
         android:onClick="viewAll"
         android:text="Показать все"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/cardBackGround"
         app:layout_constraintEnd_toEndOf="@+id/cardBackGround"
         app:layout_constraintHorizontal_bias="0.894"
@@ -60,7 +60,7 @@
         android:id="@+id/ChartBackGround"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
@@ -73,7 +73,7 @@
         android:id="@+id/LineChart"
         android:layout_width="343dp"
         android:layout_height="240dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/ChartBackGround"
         app:layout_constraintEnd_toEndOf="@+id/ChartBackGround"
         app:layout_constraintHorizontal_bias="0.517"
@@ -96,7 +96,7 @@
         android:text="7d"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/LineChart"
         app:layout_constraintStart_toEndOf="@+id/days3Stat"
         app:layout_constraintTop_toTopOf="@+id/ChartBackGround"
@@ -113,7 +113,7 @@
         android:text="30d"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/LineChart"
         app:layout_constraintEnd_toEndOf="@+id/ChartBackGround"
         app:layout_constraintHorizontal_bias="1.0"
@@ -134,7 +134,7 @@
         android:text="3d"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/LineChart"
         app:layout_constraintStart_toStartOf="@+id/ChartBackGround"
         app:layout_constraintTop_toTopOf="@+id/ChartBackGround"
@@ -150,7 +150,7 @@
         android:gravity="left"
         android:text="График"
         android:textSize="25dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/ChartBackGround"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.153"
@@ -196,7 +196,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_blue"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -307,8 +307,10 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="25dp"
             android:layout_marginEnd="46dp"
+            android:layout_marginBottom="125dp"
             android:clickable="true"
             android:onClick="dealsCard"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView12_OverView"
             app:layout_constraintHorizontal_bias="0.461"
             app:layout_constraintStart_toStartOf="parent"
@@ -638,10 +640,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/Vorornka"
+            android:layout_width="148dp"
+            android:layout_height="47dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:gravity="center"
+            android:onClick="Voronka"
+            android:text="Воронка ->"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.901"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar12_OverView" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <!--<com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="389dp"
         android:layout_height="55dp"
@@ -651,7 +669,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu_navigation" />
+        app:menu="@menu/menu_navigation" />-->
 
     <ProgressBar
         android:id="@+id/LoadingBar"

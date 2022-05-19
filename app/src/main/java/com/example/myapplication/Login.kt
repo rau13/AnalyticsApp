@@ -10,15 +10,23 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.myapplication.responses.BTRXLeads
+import com.example.myapplication.responses.ResponseBTRXDeals
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import java.net.URL
 
 class Login : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var email: EditText
     private lateinit var password: EditText
     private lateinit var button:Button
+
+    private lateinit var database: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -28,6 +36,7 @@ class Login : AppCompatActivity() {
         email = findViewById(R.id.editTextTextEmailAddress)
         password = findViewById(R.id.editTextTextPassword)
         button = findViewById(R.id.button)
+        database = FirebaseDatabase.getInstance().getReference("Bitrix")
         button.setOnClickListener{
             login()
             button.setTextColor(resources.getColor(R.color.white))
@@ -46,6 +55,8 @@ class Login : AppCompatActivity() {
                 val intent = Intent(this, Overview::class.java)
                 intent.putExtra("email", email)
                 startActivity(intent)
+                setBTXDataDeals()
+                setBTXDataLeads()
                 button.setTextColor(resources.getColor(R.color.green_chart))
                 Toast.makeText(this, "Successfully LoggedIn", Toast.LENGTH_SHORT).show()
             } else
@@ -53,6 +64,64 @@ class Login : AppCompatActivity() {
         }
         }else{
             Toast.makeText(this, "Empty fields",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setBTXDataLeads(){
+        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.lead.list.json").readText()
+        var gson = Gson()
+        var data = gson.fromJson(response, BTRXLeads::class.java)
+        Log.d("Mylog","${data.total}")
+        val delimiter1 = "T"
+        val delimiter2 = "+"
+        for(i in 0 until data.result!!.size){
+            database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).get().addOnSuccessListener {
+                if(!it.exists()){
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1, delimiter2)[1]).child("COMPANYTITLE").setValue(data.result!![i]!!.cOMPANYTITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Comments").setValue(data.result!![i]!!.cOMMENTS)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.nAME)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }else{
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1, delimiter2)[1]).child("COMPANYTITLE").setValue(data.result!![i]!!.cOMPANYTITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Comments").setValue(data.result!![i]!!.cOMMENTS)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.nAME)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }
+            }
+        }
+    }
+    private fun setBTXDataDeals(){
+        val database =  FirebaseDatabase.getInstance().getReference("BitrixDeals")
+        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json").readText()
+        var gson = Gson()
+        var data = gson.fromJson(response, ResponseBTRXDeals::class.java)
+        Log.d("Mylog","${data.total}")
+        val delimiter1 = "T"
+        val delimiter2 = "+"
+
+        for(i in 0 until data.result!!.size){
+            database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).get().addOnSuccessListener {
+                if(!it.exists()){
+
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.sOURCEID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }else{
+
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.sOURCEID)
+                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
+                }
+            }
+
+
+
         }
     }
 }

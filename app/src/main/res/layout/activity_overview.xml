@@ -826,21 +826,6 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView16"
             app:layout_constraintVertical_bias="0.666" />
 
-        <TextView
-            android:id="@+id/textViewDataVoronka"
-            android:layout_width="112dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="48dp"
-            android:background="@drawable/shape_rect"
-            android:clickable="true"
-            android:fontFamily="@font/montserrat_medium"
-            android:gravity="center"
-            android:onClick="selectDate"
-            android:text="Выбрать дату"
-            app:layout_constraintBottom_toTopOf="@+id/imageView12"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ProgressBar
             android:id="@+id/progressBar2"
             style="?android:attr/progressBarStyleHorizontal"
@@ -888,6 +873,21 @@
             app:layout_constraintEnd_toEndOf="@+id/imageView16"
             app:layout_constraintStart_toStartOf="@+id/imageView16"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/textViewDataVoronka"
+            android:layout_width="112dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="48dp"
+            android:background="@drawable/shape_rect"
+            android:clickable="true"
+            android:fontFamily="@font/montserrat_medium"
+            android:gravity="center"
+            android:onClick="selectDate"
+            android:text="Выбрать дату"
+            app:layout_constraintBottom_toTopOf="@+id/imageView12"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

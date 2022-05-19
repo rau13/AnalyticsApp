@@ -67,15 +67,15 @@ class Overview : AppCompatActivity() {
     private var sumspendtg:ArrayList<Any?> = arrayListOf()
     private var chastotafb:ArrayList<Any?> = arrayListOf()
     private var email:String? = null
-    private var nextLeads:Int = 355
-    private var nextDeals:Int = 1475
+    private var nextLeads:Int = 354
+    private var nextDeals:Int = 1574
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_overview)
         init()
-        setBTXDataDeals()
-        setBTXDataLeads()
+        /*setBTXDataDeals()
+        setBTXDataLeads()*/
 
     }
 
@@ -88,7 +88,7 @@ class Overview : AppCompatActivity() {
        myModelList = arrayListOf()
        viewpager = findViewById(R.id.Cards)
        viewpager.setOffscreenPageLimit(10)
-
+        database = FirebaseDatabase.getInstance().getReference("Dates")
        val extras = intent.extras
        if (extras != null) {
            email = extras.getString("email")
@@ -101,6 +101,18 @@ class Overview : AppCompatActivity() {
        mscroller.isAccessible = true
        val scroller = FixedSpeedScroller(viewpager.context)
        mscroller.set(viewpager, scroller)
+        getFB()
+        val calendarForFirstOpen = Calendar.getInstance()
+
+        calendarForFirstOpen.set(Calendar.YEAR, today_date[0].toString().split("-")[0].toInt())
+        calendarForFirstOpen.set(Calendar.MONTH, today_date[0].toString().split("-")[1].toInt()-1)
+        calendarForFirstOpen.set(Calendar.DAY_OF_MONTH,today_date[0].toString().split("-")[2].toInt()+1)
+        val myFormat = "yyyy-MM-dd"
+        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+        val dateRange = sdf.format(calendarForFirstOpen.time)
+
+        dates.add(today_date[0].toString())
+        dates.add(dateRange.toString())
        getFireBaseData()
 
        Log.d("Mylog","$ohvat_fb")
@@ -119,9 +131,7 @@ class Overview : AppCompatActivity() {
        viewpager.setPadding(100, 0, 100, 0)
 
        //bottomMenu()
-        getFB()
-       dates.add(today_date[0].toString())
-       dates.add(today_date[0].toString())
+
        daysCount = dates.count()
        textViewDataOverview.text = "${dates[0]}\n${dates[1]}"
        DataTextViewAll.text = "${dates[0]}\n${dates[1]}"
@@ -131,8 +141,8 @@ class Overview : AppCompatActivity() {
        calendar.set(Calendar.DAY_OF_MONTH,today_date[0]!!.split("-")[2].toInt())
        endDateRange = calendar.timeInMillis
 
-       database = FirebaseDatabase.getInstance().getReference("Dates")
-       getFireBaseData()
+      /* database = FirebaseDatabase.getInstance().getReference("Dates")
+       getFireBaseData()*/
        getBTRXDeals()
        getBTRXLeads()
 
@@ -402,7 +412,7 @@ class Overview : AppCompatActivity() {
         val date1 = Date(timeStart)
         val date2 = Date(timeEnd!!.toLong())
         val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
-
+        val dateVoronka = findViewById<TextView>(R.id.textViewDataVoronka)
         getDatesBetween(sdf.format(date1),sdf.format(date2))
         getBTRXLeads()
         getBTRXDeals()
@@ -411,11 +421,11 @@ class Overview : AppCompatActivity() {
         Handler().postDelayed({chart(ohvat_fb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)},1200)
         textViewDataOverview.text = "${sdf.format(date1)}\n${sdf.format(date2)}"
         DataTextViewAll.text = "${sdf.format(date1)}\n${sdf.format(date2)}"
-        textViewDataVoronka.text = "${sdf.format(date1)}\n${sdf.format(date2)}"
+        dateVoronka.text = "${sdf.format(date1)}\n${sdf.format(date2)}"
         days30Stat.setTextColor(resources.getColor(R.color.white))
         days3Stat.setTextColor(resources.getColor(R.color.white))
         days7Stat.setTextColor(resources.getColor(R.color.white))
-        val dateAll = findViewById<TextView>(R.id.DataTextViewAll)
+
 
 
     }
@@ -902,64 +912,6 @@ class Overview : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun setBTXDataLeads(){
-        database = FirebaseDatabase.getInstance().getReference("Bitrix")
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.lead.list.json?start=$nextLeads").readText()
-        var gson = Gson()
-        var data = gson.fromJson(response, BTRXLeads::class.java)
-        Log.d("Mylog","${data.total}")
-        val delimiter1 = "T"
-        val delimiter2 = "+"
-        for(i in 0 until data.result!!.size){
-            database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).get().addOnSuccessListener {
-                if(!it.exists()){
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1, delimiter2)[1]).child("COMPANYTITLE").setValue(data.result!![i]!!.cOMPANYTITLE)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Comments").setValue(data.result!![i]!!.cOMMENTS)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.nAME)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
-                }else{
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1, delimiter2)[1]).child("COMPANYTITLE").setValue(data.result!![i]!!.cOMPANYTITLE)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Comments").setValue(data.result!![i]!!.cOMMENTS)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.nAME)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
-                }
-            }
-        }
-    }
-    private fun setBTXDataDeals(){
-        val database =  FirebaseDatabase.getInstance().getReference("BitrixDeals")
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json?start=$nextDeals").readText()
-        var gson = Gson()
-        var data = gson.fromJson(response, ResponseBTRXDeals::class.java)
-        Log.d("Mylog","${data.total}")
-        val delimiter1 = "T"
-        val delimiter2 = "+"
-
-        for(i in 0 until data.result!!.size){
-            database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).get().addOnSuccessListener {
-                if(!it.exists()){
-
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.sOURCEID)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
-                }else{
-
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("COMPANYID").setValue(data.result!![i]!!.cOMPANYID)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("TITLE").setValue(data.result!![i]!!.tITLE)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("Name").setValue(data.result!![i]!!.sOURCEID)
-                    database.child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[0]).child(data.result!![i]!!.dATECREATE.toString().split(delimiter1,delimiter2)[1]).child("CONTACTID").setValue(data.result!![i]!!.cONTACTID)
-                }
-            }
-
-
-
-        }
-    }
 
    /* fun getFB(){
         var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()

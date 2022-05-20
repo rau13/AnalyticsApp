@@ -30,7 +30,7 @@ class Login : AppCompatActivity() {
     private lateinit var button:Button
     private var totalDeals:String? = null
     private var totalLeads:String? = null
-    private lateinit var database: DatabaseReference
+      private lateinit var database: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -151,4 +151,3 @@ class Login : AppCompatActivity() {
         totalLeads = data.total.toString()
     }
 }
-

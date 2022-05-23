@@ -213,7 +213,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Частота", chastotafb.map { it.toString().toFloat() }.average().toInt(), 2*daysCount!!))
         myModelList.add(OverViewModel("CTR", Ctr_fb.map { it.toString().toFloat() }.average().toInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(), 500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -306,13 +306,13 @@ class Overview : AppCompatActivity() {
                     textView6_OverView.text = "Частота:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(chastotafb.toArray().map { it.toString().toFloat().roundToInt() }.average())}"
                     textView8_OverView.text = "CTR:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(Ctr_fb.toArray().map { it.toString().toFloat().roundToInt() }.average())}"
                     textView10_OverView.text = "Стоимость 1000 охватов:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(fb1000.toArray().map{it.toString().toFloat()}.sum().roundToInt())}"
-                    textView11_OverView.text = "Сумма затрат:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendfb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}$"
+                    textView11_OverView.text = "Сумма затрат в долларах:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendfb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}$"
                     textView12_OverView.text = "Сумма затрат в тенге:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendtg.toArray().map{it.toString().toFloat()}.sum().roundToInt())}"
                     textView3.text =  "Охват:\n${
                         CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(ohvat_fb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}"
                     textView4.text = "Показы:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(pokazi_fb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}"
                     textView5.text = "Клики:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(clicks_fb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}"
-                    textView6.text = "Сумма затрат:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendfb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}$"
+                    textView6.text = "Сумма затрат в долларах:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendfb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}$"
                     loadcards()
                     Handler().postDelayed({chart(ohvat_fb.map { it.toString().toFloat().toInt() } as ArrayList<Int>)},1200)
                     Log.d("Mylog","Охват: $ohvat_fb")
@@ -325,7 +325,7 @@ class Overview : AppCompatActivity() {
                     textView6_OverView.text = "Частота:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(chastotafb.toArray().map { it.toString().toFloat().roundToInt() }.average())}"
                     textView8_OverView.text = "CTR:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(Ctr_fb.toArray().map { it.toString().toFloat().roundToInt() }.average())}"
                     textView10_OverView.text = "Стоимость 1000 охватов:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(fb1000.toArray().map{it.toString().toFloat()}.sum().roundToInt())}"
-                    textView11_OverView.text = "Сумма затрат:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendfb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}"
+                    textView11_OverView.text = "Сумма затрат в долларах:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendfb.toArray().map { it.toString().toFloat() }.sum().roundToInt())}"
                     textView12_OverView.text = "Сумма затрат в тенге:\n${CompactDecimalFormat.getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT).format(sumspendtg.toArray().map{it.toString().toFloat()}.sum().roundToInt())}"
                 }
             }
@@ -723,7 +723,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -744,7 +744,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -763,7 +763,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -782,7 +782,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Охват", ohvat_fb.map { it.toString().toFloat() }.sum().roundToInt(),25000*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -801,7 +801,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Показы",pokazi_fb.map { it.toString().toFloat() }.sum().roundToInt(),30000*daysCount!!))
         myModelList.add(OverViewModel("Охват", ohvat_fb.map { it.toString().toFloat() }.sum().roundToInt(),25000*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -820,7 +820,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Клики", clicks_fb.map { it.toString().toFloat() }.sum().roundToInt(), 800*daysCount!!))
         myModelList.add(OverViewModel("Показы",pokazi_fb.map { it.toString().toFloat() }.sum().roundToInt(),30000*daysCount!!))
         myModelList.add(OverViewModel("Охват", ohvat_fb.map { it.toString().toFloat() }.sum().roundToInt(),25000*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
@@ -833,7 +833,7 @@ class Overview : AppCompatActivity() {
     }
     fun sumspendCard(view:View){
         myModelList.clear()
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
@@ -853,7 +853,7 @@ class Overview : AppCompatActivity() {
     fun sumspendtg(view:View){
         myModelList.clear()
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
@@ -873,7 +873,7 @@ class Overview : AppCompatActivity() {
         myModelList.clear()
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
@@ -893,7 +893,7 @@ class Overview : AppCompatActivity() {
         myModelList.add(OverViewModel("Лиды", total.count(), 500*daysCount!!))
         myModelList.add(OverViewModel("Сделки", totalDeals.count(),500*daysCount!!))
         myModelList.add(OverViewModel("Сумма затрат в тенге",sumspendtg.map { it.toString().toFloat() }.sum().roundToInt(),70129*daysCount!!))
-        myModelList.add(OverViewModel("Сумма затрат($)",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
+        myModelList.add(OverViewModel("Сумма затрат в долларах",sumspendfb.map { it.toString().toFloat() }.sum().roundToInt(),150*daysCount!!))
         myModelList.add(OverViewModel("Стоимость 1000 охватов",fb1000.map { it.toString().toFloat() }.sum().roundToInt(),4*daysCount!!))
         myModelList.add(OverViewModel("CTR",Ctr_fb.map { it.toString().toFloat() }.sum().roundToInt(),3*daysCount!!))
         myModelList.add(OverViewModel("Частота", chastotafb.map{ it.toString().toFloat() }.sum().roundToInt(), 2*daysCount!!))
@@ -998,7 +998,7 @@ class Overview : AppCompatActivity() {
     }
     private fun setFBFirebase(){
         //Date
-        database.child("2022-04-11").get().addOnSuccessListener {
+        database.child(today_date[0].toString()).get().addOnSuccessListener {
             if(!it.exists()){
                 database.child(today_date[0].toString()).child("Охват").setValue(ohvat.map { it!!.toFloat() }.sum().toString())
                 database.child(today_date[0].toString()).child("Показы").setValue(impression.map { it!!.toFloat() }.sum().toString())

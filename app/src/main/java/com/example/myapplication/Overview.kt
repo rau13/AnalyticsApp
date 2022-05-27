@@ -74,10 +74,7 @@ class Overview : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_overview)
         init()
-        /*setBTXDataDeals()
-        setBTXDataLeads()*/
-
-    }
+   }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun init(){
@@ -130,7 +127,7 @@ class Overview : AppCompatActivity() {
        viewpager.adapter = myAdapter
        viewpager.setPadding(100, 0, 100, 0)
 
-       //bottomMenu()
+       
 
        daysCount = dates.count()
        textViewDataOverview.text = "${dates[0]}\n${dates[1]}"
@@ -141,8 +138,7 @@ class Overview : AppCompatActivity() {
        calendar.set(Calendar.DAY_OF_MONTH,today_date[0]!!.split("-")[2].toInt())
        endDateRange = calendar.timeInMillis
 
-      /* database = FirebaseDatabase.getInstance().getReference("Dates")
-       getFireBaseData()*/
+      
        getBTRXDeals()
        getBTRXLeads()
 
@@ -185,24 +181,7 @@ class Overview : AppCompatActivity() {
 
            }
        })
-        /* fixedRateTimer("timer", false, 0L, 60 * 1000) {
-
-            cpm.clear()
-            ctr.clear()
-            spend.clear()
-            clicks.clear()
-            frequency.clear()
-            impression.clear()
-            ohvat.clear()
-            getFB()
-            setFBFirebase()
-
-        }
-        fixedRateTimer("timer", false, 0L, 10800) {
-
-            setBTXDataDeals()
-            setBTXDataLeads()
-        }*/
+        
 
    }
     private fun loadcards(){
@@ -368,9 +347,7 @@ class Overview : AppCompatActivity() {
             val endDate = dateSelected.second
             Cards.isEnabled = false
             Cards.visibility = View.GONE
-            /*val dateRange = convertLongToTime(endDate).split("-")
-            Log.d("Mylog","$dateRange")
-            Log.d("Mylog","${getDaysAgo(7,dateRange[2].toInt(), dateRange[1].toInt(), dateRange[0].toInt())}")*/
+            
             updateLabel(startDate, endDate!!.toLong())
             LoadingBar.visibility = View.VISIBLE
 
@@ -913,26 +890,10 @@ class Overview : AppCompatActivity() {
     }
 
 
-   /* fun getFB(){
-        var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()
-        var gson = Gson()
-        var data = gson.fromJson(response, ResponseFB::class.java)
-        for(i in 0 until data.data!!.size){
-            today_date.add(data.data!!.get(i)?.dateStart)
-            cpm.add( data.data!!.get(i)?.cpm)
-            ctr.add(data.data!!.get(i)?.ctr)
-            spend.add(data.data!!.get(i)?.spend)
-            clicks.add(data.data!!.get(i)?.clicks)
-            frequency.add(data.data!!.get(i)?.frequency)
-            impression.add(data.data!!.get(i)?.impressions)
-            ohvat.add(data.data!!.get(i)?.reach)
-            Log.d("Mylog","$today_date")
-        }
-    }*/
-    private fun getData(){
+    //set data from FB to Firebase(data range)
+    private fun setData(){
         for(i in 10..16){
-            var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?level=adset&time_range={since:%272022-05-$i%27,until:%272022-05-$i%27}&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&period=day&access_token=EAAGIwn75WhMBABn3OHLdHzFBmZB8kM8Lg3DprPysWNseX16sPwxE0rzn8AsX7A1fZBKe31ebzyqwlAB5t42W60Pco3ZAn4McnLEkwoO5U72x39ZBQLT0RZCsx5jRSHPireq6QEX8foRGTOhqHkYaZC58CYXj2qrZArxfAItjZChj8pSsOGHZAxWVQ").readText()
-            var gson = Gson()
+            var response = URL("Facebook Rest API")
             var data = gson.fromJson(response, ResponseFB::class.java)
             var today_date1 = arrayListOf<String?>()
             var cpm1 = arrayListOf<String?>()
@@ -1023,8 +984,9 @@ class Overview : AppCompatActivity() {
 
         }
     }
+    //get data from Facebook (today)
     private fun getFB(){
-        var response = URL("https://graph.facebook.com/v13.0/act_610477010062472/insights?date_preset=today&level=adset&fields=ctr,clicks,frequency,impressions,spend,cpm,reach&access_token=EAAHQNv5XZCHwBAJZAgk01yOZBGsbgAA0nkDS86Vs9WzLUZCUZBBdtB5dqm52G1iqKqCKqO0tppqsDrxDiQYUafVBUyDqOy6njUjIdGyqLWB8yH39YsuMoBTv0mBU7hhiSt3z4GI55uMmV6dZAjOu3XIxFeZAHF1eTfBfBAQHo4EkP1E3lNzkvea1g78prCQ9t1EFDeqbrAZCkGScBCj04dJK").readText()
+        var response = URL("Facebook Rest API").readText()
         var gson = Gson()
         var data = gson.fromJson(response, ResponseFB::class.java)
         for(i in 0 until data.data!!.size){

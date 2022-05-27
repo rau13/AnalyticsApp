@@ -83,7 +83,8 @@ class Login : AppCompatActivity() {
     }
 
     private fun setBTXDataLeads(){
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.lead.list.json?start=$totalLeads").readText()
+        // set data from Bitrix to Realtime Firebase
+        var response = URL("Bitrix Rest API").readText()
         var gson = Gson()
         var data = gson.fromJson(response, BTRXLeads::class.java)
         Log.d("Mylog","${data.total}")
@@ -110,8 +111,9 @@ class Login : AppCompatActivity() {
         }
     }
     private fun setBTXDataDeals(){
+        //set data from bitrix to Realtime Firebase
         val database =  FirebaseDatabase.getInstance().getReference("BitrixDeals")
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json?start=$totalDeals").readText()
+        var response = URL("Bitrix Rest API").readText()
         var gson = Gson()
         var data = gson.fromJson(response, ResponseBTRXDeals::class.java)
         val delimiter1 = "T"
@@ -139,14 +141,16 @@ class Login : AppCompatActivity() {
         }
     }
     private fun totalDeals(){
+        //Get total from crm list
         val database =  FirebaseDatabase.getInstance().getReference("BitrixDeals")
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.deal.list.json").readText()
+        var response = URL("Bitrix Rest Api").readText()
         var gson = Gson()
         var data = gson.fromJson(response, ResponseBTRXDeals::class.java)
         totalDeals = data.total.toString()
     }
     private fun totalLeads(){
-        var response = URL("https://estero.bitrix24.kz/rest/57/4sr1m84vu05m46bf/crm.lead.list.json").readText()
+        //Get total from crm list
+        var response = URL("Bitrix Rest Api").readText()
         var gson = Gson()
         var data = gson.fromJson(response, BTRXLeads::class.java)
         totalLeads = data.total.toString()
